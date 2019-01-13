@@ -35,7 +35,7 @@ It can be configured to run periodically using CloudWatch events.
 
 Note: you can test the lambda function using the "Test" button and providing config like above.
 
-**AWS lambda has a 5 minute maximum execution time for lambda functions, so your backup must take less time that that.**
+**AWS lambda has a 15 minute maximum execution time for lambda functions, so your backup must take less time that that.**
 
 ## File Naming
 
