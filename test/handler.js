@@ -63,6 +63,38 @@ describe('Handler', () => {
         expect(stream).to.be.ok
         expect(config.S3_BUCKET).to.equal(mockEvent.S3_BUCKET)
         expect(config.PGDATABASE).to.equal(mockEvent.PGDATABASE)
+        expect(config.STORAGE_CLASS).to.equal('STANDARD')
+        expect(key).to.equal('2017-05-02/dbname-02-05-2017@01-33-11.backup')
+        expect(result).to.equal(
+            'mock-uploaded/2017-05-02/dbname-02-05-2017@01-33-11.backup'
+        )
+    })
+
+    it('should check other storage class', async () => {
+        const { s3Spy, pgSpy } = makeMockHandler()
+
+        const event = { ...mockEvent }
+        event.STORAGE_CLASS = 'STANDARD_IA'
+
+        const result = await handler(event)
+
+        // handler should have called pgSpy with correct arguments
+        expect(pgSpy.calledOnce).to.be.true
+        expect(pgSpy.firstCall.args).to.have.length(1)
+        const [arg0] = pgSpy.firstCall.args
+        expect(arg0.S3_BUCKET).to.equal(event.S3_BUCKET)
+        expect(arg0.PGDATABASE).to.equal(event.PGDATABASE)
+        expect(arg0.STORAGE_CLASS).to.equal(event.STORAGE_CLASS)
+
+
+        // handler should have called s3spy with correct arguments
+        expect(s3Spy.calledOnce).to.be.true
+        expect(s3Spy.firstCall.args).to.have.length(3)
+        const [stream, config, key] = s3Spy.firstCall.args
+        expect(stream).to.be.ok
+        expect(config.S3_BUCKET).to.equal(event.S3_BUCKET)
+        expect(config.PGDATABASE).to.equal(event.PGDATABASE)
+        expect(config.STORAGE_CLASS).to.equal(event.STORAGE_CLASS)
         expect(key).to.equal('2017-05-02/dbname-02-05-2017@01-33-11.backup')
         expect(result).to.equal(
             'mock-uploaded/2017-05-02/dbname-02-05-2017@01-33-11.backup'

@@ -33,6 +33,24 @@ It can be configured to run periodically using CloudWatch events.
     ```
     - *Test* and check the output
 
+    **Additional parameters**
+    - `PGDUMP_ARGS` - Pass additional parameters to pd_dump run
+    - `STORAGE_CLASS` - Choose the S3 storage class from: `STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE`, by default using `STANDARD`
+
+    For example
+        ```json
+    {
+        "PGDATABASE": "dbname",
+        "PGUSER": "postgres",
+        "PGPASSWORD": "password",
+        "PGHOST": "host",
+        "S3_BUCKET" : "db-backups",
+        "ROOT": "hourly-backups",
+        "PGDUMP_ARGS": "--format=custom --compress=2",
+        "STORAGE_CLASS": "STANDARD_IA"
+    }
+    ```
+
 5. Create a CloudWatch rule:
     - Event Source: Schedule -> Fixed rate of 1 hour
     - Targets: Lambda Function (the one created in step #1)
